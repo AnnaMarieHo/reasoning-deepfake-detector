@@ -1,3 +1,6 @@
 openfake_annotation/datasets/fake_balanced_filtered/images
 openfake_annotation/datasets/openfake_raw/images
+checkpoints/
+venv/
+__pycache__/
 Untitled1.ipynb
