@@ -1,5 +1,5 @@
-openfake_annotation/datasets
+openfake-annotation/datasets/
 checkpoints/
 venv/
 __pycache__/
-Untitled1.ipynb
+*.ipynb
