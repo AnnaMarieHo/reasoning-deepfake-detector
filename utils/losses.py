@@ -1,0 +1,11 @@
+import torch.nn.functional as F
+import torch
+
+def bce_loss(logits, labels):
+    return F.binary_cross_entropy_with_logits(logits.squeeze(), labels)
+
+def style_centroid_margin(style_vecs, labels, margin=0.5):
+    #cEncourage fake styles to deviate from real style centroid.
+    real_mu = style_vecs[labels == 1].mean(0, keepdim=True)
+    d = torch.cdist(style_vecs, real_mu)
+    return torch.clamp(margin - d, min=0).mean()
