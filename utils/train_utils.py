@@ -12,6 +12,9 @@ def train_epoch(base_model, heads, dataloader, optimizer, device):
     for h in heads.values():
         h.train()
 
+    total_loss = 0.0
+    num_batches = 0
+
     for img_emb, txt_emb, style, y, sim, cluster in dataloader:
         img_emb, txt_emb = img_emb.to(device), txt_emb.to(device)
 
@@ -40,14 +43,18 @@ def train_epoch(base_model, heads, dataloader, optimizer, device):
         loss_style = style_centroid_margin(style, y)
         align_loss = 1 - F.cosine_similarity(proj_img, proj_txt, dim=-1).mean()
 
-        # Weighted sum
-        loss = loss_main + 0.1 * loss_cluster + 0.2 * loss_style + 0.05 * align_loss
+        # Weighted sum with loss scaling
+        # Scale down cluster loss which is typically larger
+        loss = loss_main + 0.05 * loss_cluster + 0.1 * loss_style + 0.1 * align_loss
 
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
-    return float(loss.item())
+        total_loss += loss.item()
+        num_batches += 1
+
+    return total_loss / num_batches if num_batches > 0 else 0.0
 
 
 def validate_epoch(base_model, heads, dataloader, device):
