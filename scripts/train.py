@@ -12,8 +12,8 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Load components
 clip_proc = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
-style_extractor = StyleExtractor(device)
-base_model = FusionModel().to(device)
+# style_extractor = StyleExtractor(device)
+base_model = FusionModel(style_dim=771).to(device)
 
 # Define heads
 heads = {
@@ -28,8 +28,11 @@ params = list(base_model.proj_style.parameters())
 for h in heads.values(): params += list(h.parameters())
 opt = torch.optim.AdamW(params, lr=1e-4)
 
-dataset = CachedEmbeddingDataset("data/cache/fused_embeddings.npz")
+dataset = CachedEmbeddingDataset("openfake-annotation/datasets/combined/cache/fused_embeddings.npz")
 
+# Check dataset distribution
+labels = dataset.label.numpy()
+print(f"Dataset: {len(dataset)} samples | Real: {(labels==1).sum()} | Fake: {(labels==0).sum()}")
 
 train_size = int(0.8 * len(dataset))
 train_ds, val_ds = random_split(dataset, [train_size, len(dataset)-train_size])

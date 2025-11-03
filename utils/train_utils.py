@@ -14,10 +14,18 @@ def train_epoch(base_model, heads, dataloader, optimizer, device):
 
     for img_emb, txt_emb, style, y, sim, cluster in dataloader:
         img_emb, txt_emb = img_emb.to(device), txt_emb.to(device)
+
+        # print(f"img_emb: {img_emb.shape}, txt_emb: {txt_emb.shape}, style: {style.shape}, y: {y.shape}, cluster: {cluster.shape}")
+
         style, y, cluster = style.to(device), y.to(device), cluster.to(device)
+
+        # print(f"style: {style.shape}, y: {y.shape}, cluster: {cluster.shape}")
 
         # project style and fuse embeddings
         z_style = base_model.proj_style(style)
+
+        # print(f"projected & fused: {z_style.shape}")
+
         fused = torch.cat([img_emb, txt_emb, z_style], dim=-1)
 
         #Forward through heads
@@ -58,8 +66,8 @@ def validate_epoch(base_model, heads, dataloader, device):
             fused = torch.cat([img_emb, txt_emb, z_style], dim=-1)
 
             probs = torch.sigmoid(heads["real_fake"](fused))
-            y_true.extend(y.cpu().numpy())
-            y_prob.extend(probs.cpu().numpy())
+            y_true.extend(y.cpu().numpy().flatten())
+            y_prob.extend(probs.cpu().numpy().flatten())
 
     acc, auc = compute_metrics(y_true, y_prob)
     return acc, auc

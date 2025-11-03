@@ -14,6 +14,7 @@ class StyleExtractor:
 
     def get_aesthetic_emb(self, image):
         inputs = self.processor(images=image, return_tensors="pt").to(self.device)
+
         with torch.no_grad():
             # use mean-pooled vision embeddings as "style" vector
             feats = self.model(**inputs).last_hidden_state.mean(dim=1)

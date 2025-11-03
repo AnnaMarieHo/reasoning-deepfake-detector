@@ -10,8 +10,11 @@ clip = CLIPModel.from_pretrained(clip_name).to(device).eval()
 proc = CLIPProcessor.from_pretrained(clip_name)
 style_extractor = StyleExtractor(device)
 
-in_json  = "openfake-annotation/datasets/fake_balanced_filtered/metadata.json"
-out_path = "openfake-annotation/datasets/fake_balanced_filtered/cache/fused_embeddings.npz"
+# in_json  = "openfake-annotation/datasets/fake_balanced_filtered/metadata.json"
+# out_path = "openfake-annotation/datasets/fake_balanced_filtered/cache/fused_embeddings.npz"
+
+in_json  = "openfake-annotation/datasets/combined/metadata.json"
+out_path = "openfake-annotation/datasets/combined/cache/fused_embeddings.npz"
 
 with open(in_json, "r", encoding="utf-8") as f:
     data = json.load(f)
