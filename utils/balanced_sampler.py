@@ -3,9 +3,7 @@ from torch.utils.data import Sampler
 import numpy as np
 
 class BalancedBatchSampler(Sampler):
-    """
-    Ensures each batch has approximately equal numbers of real and fake samples.
-    """
+    
     def __init__(self, labels, batch_size):
         self.labels = labels
         self.batch_size = batch_size
